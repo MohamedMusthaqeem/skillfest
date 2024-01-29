@@ -4,6 +4,7 @@ export default {
   theme: {
     fontFamily: {
       signature: ["Edu SA Beginner"],
+      poppins:"Poppins",
     },
     extend: {},
   },

@@ -1,6 +1,7 @@
 import adminImg from "../assets/admin2.png";
 import srecImg from "../assets/srec.png";
 import menuBar from "../assets/menu.png";
+import { Link } from "react-router-dom";
 
 const Mainpage = () => {
   return (
@@ -38,9 +39,12 @@ const Mainpage = () => {
                 placeholder="Password"
                 className="w-full p-2 rounded-md  outline-violet-500 duration-75"
               />
-              <button className=" flex justify-center items-start border p-2 rounded-md w-full bg-[#F0DE36] hover:bg-[#F0DE36] active:bg-[#F1C93B] hover:scale-105 duration-150">
+              <Link
+                to="Layout"
+                className=" flex justify-center items-start border p-2 rounded-md w-full bg-[#F0DE36] hover:bg-[#F0DE36] active:bg-[#F1C93B] hover:scale-105 duration-150"
+              >
                 Login
-              </button>
+              </Link>
             </div>
           </div>
         </div>

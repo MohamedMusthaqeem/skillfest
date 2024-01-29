@@ -2,7 +2,7 @@ import React from "react";
 import { HiOutlineSearch } from "react-icons/hi";
 const Header = () => {
   return (
-    <div className="bg-white h-16 px-4 flex justify-between items-center border-b border-gray-200">
+    <div className="bg-white h-[64px] min-h-[64px] px-4 flex justify-between items-center border-b border-gray-200">
       <div className="relative">
         <HiOutlineSearch
           size={20}

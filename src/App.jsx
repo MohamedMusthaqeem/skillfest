@@ -59,21 +59,22 @@ function App() {
   ];
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="Events" element={<Events />} />
-            <Route path="Workshop" element={<Workshop />} />
-            <Route path="competition" element={<Competition />} />
-            <Route path="report" element={<Report />} />
-            <Route path="support" element={<Support />} />
-            <Route path="about" element={<About />} />
-          </Route>
-        </Routes>
-      </Router>
-      {/* <Deptlisting listing={listing} /> */}
-      {/* <Mainpage /> */}
+      {
+        <Router>
+          <Routes>
+            <Route path="/" element={<Mainpage />} />
+            <Route path="Layout" element={<Layout />}>
+              <Route path="Dashboard" element={<Dashboard />} />
+              <Route path="Events" element={<Events />} />
+              <Route path="Workshop" element={<Workshop />} />
+              <Route path="competition" element={<Competition />} />
+              <Route path="report" element={<Report />} />
+              <Route path="support" element={<Support />} />
+              <Route path="about" element={<About />} />
+            </Route>
+          </Routes>
+        </Router>
+      }
     </>
   );
 }

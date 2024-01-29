@@ -1,10 +1,11 @@
 import React from "react";
 import menuBar from "../assets/menu.png";
+import { Link } from "react-router-dom";
 
 const Deptlisting = ({ listing }) => {
   return (
     <>
-      <div className="bg-[#F0DE36] sm:h-fit md:h-screen  ">
+      <Link to="Layout" className="bg-[#F0DE36] sm:h-fit md:h-screen  ">
         <nav
           name="navbar"
           className="flex  justify-between p-3 bg-[#071952] sticky  top-0 text-white"
@@ -27,7 +28,7 @@ const Deptlisting = ({ listing }) => {
             </div>
           ))}
         </div>
-      </div>
+      </Link>
     </>
   );
 };
