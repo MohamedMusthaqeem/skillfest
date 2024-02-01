@@ -1,3 +1,5 @@
+import { useReactToPrint } from "react-to-print";
+import { useMemo, useRef, useState,useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -6,11 +8,23 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-import tData from "../TEST_DATA.json";
-import { useMemo, useRef, useState } from "react";
-import { useReactToPrint } from "react-to-print";
+import axios from "axios";
+
+
 
 const Report = () => {
+  const [regsiter, setRegister] = useState([]);
+  useEffect(() => {
+    const fetchRegister = async () => {
+      const res = await axios.get("http://localhost:5000/api/register");
+      const data = res.data;
+      if (res.status) {
+        setRegister(data);
+        console.log(data);
+      }
+    };
+    fetchRegister();
+  },[]);
   //   "Unique_Id": 1,
   // "Name": "Batsheva",
   // "College": "National Ilan University",
@@ -18,36 +32,40 @@ const Report = () => {
   // "Event": "Business Development",
   // "Phone_No": "6712411257",
   // "Email": "bmallinar0@slate.com"
-  const data = useMemo(() => tData, []);
+  const data = useMemo(() => regsiter);
 
   const columns = [
     {
       header: "UNIQUE_ID",
-      accessorKey: "Unique_Id",
+      accessorKey: "_id",
     },
     {
       header: "NAME",
-      accessorKey: "Name",
+      accessorKey: "name",
     },
     {
       header: "COLLEGE",
-      accessorKey: "College",
+      accessorKey: "college",
     },
     {
       header: "YEAR",
-      accessorKey: "Year",
+      accessorKey: "year",
     },
     {
       header: "EVENT",
-      accessorKey: "Event",
+      accessorKey: "event_name",
     },
     {
       header: "PHONE_NO",
-      accessorKey: "Phone_No",
+      accessorKey: "phone_no",
     },
     {
       header: "EMAIL",
-      accessorKey: "Email",
+      accessorKey: "email",
+    },
+    {
+      header: "AMOUNT",
+      accessorKey: "fees",
     },
   ];
 

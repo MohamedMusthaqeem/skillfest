@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useEventContext } from "../hooks/useEventContext";
+import tick from '../assets/tick.gif'
 
 const EventForm = () => {
   const { dispatch } = useEventContext();
@@ -74,7 +75,7 @@ const EventForm = () => {
         formData
       )
       .then((res) => {
-        setStatus("✅");
+        setStatus(tick);
         setImage(res.data.secure_url);
         console.log(res);
       })
@@ -109,7 +110,7 @@ const EventForm = () => {
             <h1>Image:</h1>
             <div className="flex space-x-1">
               <input type="file" onChange={handleFile} className="py-1 px-2" />
-              <p>{status}</p>
+              <img src={status} alt="" className="h-8 bg-transparent" />
             </div>
           </div>
           <div className="flex flex-col  w-1/2 space-x-2">

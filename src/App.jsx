@@ -59,22 +59,18 @@ function App() {
   ];
   return (
     <>
-      {
-        <Router>
           <Routes>
             <Route path="/" element={<Mainpage />} />
-            <Route path="Layout" element={<Layout />}>
-              <Route path="Dashboard" element={<Dashboard />} />
-              <Route path="Events" element={<Events />} />
-              <Route path="Workshop" element={<Workshop />} />
+            <Route path="layout" element={<Layout />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="events" element={<Events />} />
+              <Route path="workshop" element={<Workshop />} />
               <Route path="competition" element={<Competition />} />
               <Route path="report" element={<Report />} />
               <Route path="support" element={<Support />} />
               <Route path="about" element={<About />} />
             </Route>
           </Routes>
-        </Router>
-      }
     </>
   );
 }
