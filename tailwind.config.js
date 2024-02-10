@@ -6,7 +6,12 @@ export default {
       signature: ["Edu SA Beginner"],
       poppins:"Poppins",
     },
-    extend: {},
+    extend: {
+      colors:{
+        "Primary":"#071952",
+        "Secondary":"#EFC75E"
+      }
+    },
   },
   plugins: [],
 };

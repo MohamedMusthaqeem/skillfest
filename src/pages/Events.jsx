@@ -3,12 +3,18 @@ import axios from "axios";
 import EventForm from "../components/EventForm";
 import { useEventContext } from "../hooks/useEventContext";
 import Tempeve from "../components/Tempeve";
+import {useAuthContext} from '../hooks/useAuthContext'
 
 const Events = () => {
+  const {user}=useAuthContext();
   const { events, dispatch } = useEventContext();
   useEffect(() => {
     const fetchEvent = async () => {
-      const res = await axios.get("http://localhost:5000/api/events");
+      const res = await axios.get("http://localhost:5000/api/events",{
+        headers:{
+          "Authorization":`Bearer ${user.token}`
+        }
+      });
       const data = res.data;
       if (res.status) {
         dispatch({ type: "SET_EVENT", payload: data });

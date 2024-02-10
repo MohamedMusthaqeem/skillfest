@@ -6,17 +6,23 @@ import { CompetitionContextProvider } from "./context/CompetitionContext.jsx";
 import { EventContextProvider } from "./context/EventContext.jsx";
 import { WorkshopContextProvider } from "./context/WorkshopContext.jsx";
 import { BrowserRouter } from "react-router-dom";
+import { AuthContextProvider } from "./context/AuthContext";
+import { UserContextProvider } from "./context/UserContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <CompetitionContextProvider>
-      <EventContextProvider>
-        <WorkshopContextProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </WorkshopContextProvider>
-      </EventContextProvider>
-    </CompetitionContextProvider>
+    <AuthContextProvider>
+      <UserContextProvider>
+        <CompetitionContextProvider>
+          <EventContextProvider>
+            <WorkshopContextProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </WorkshopContextProvider>
+          </EventContextProvider>
+        </CompetitionContextProvider>
+      </UserContextProvider>
+    </AuthContextProvider>
   </React.StrictMode>
 );

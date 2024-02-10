@@ -2,8 +2,10 @@ import React from 'react'
 import {useState} from 'react'
 import { useWorkshopContext } from '../hooks/useWorkshopContext';
 import axios from 'axios';
+import {useAuthContext} from '../hooks/useAuthContext'
 
 const Workform = () =>{
+  const{user}=useAuthContext();
     const {dispatch}=useWorkshopContext();
     const [status, setStatus] = useState("");
     const [title, setTitle] = useState("");
@@ -39,6 +41,7 @@ const Workform = () =>{
       const res = await axios.post("http://localhost:5000/api/workshops", newwork, {
         headers: {
           "Content-Type": "application/json",
+          "Authorization":`Bearer ${user.token}`
         },
       });
       const data = res.data;

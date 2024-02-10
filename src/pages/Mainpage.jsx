@@ -1,55 +1,122 @@
-import adminImg from "../assets/admin2.png";
-import srecImg from "../assets/srec.png";
-import menuBar from "../assets/menu.png";
-import { Link } from "react-router-dom";
-
+import { useState } from "react";
+import LoginImg from "../assets/Sign up.gif";
+import {useLogin} from '../hooks/useLogin'
 const Mainpage = () => {
+  const [admin, setAdmin] = useState("underline ");
+  const [user, setUser] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [current,setCurrent]=useState({
+    current:"user_main",
+    to:"layout"
+  });
+  const {error,isLoading,login} =useLogin();
+  const handleSubmit= async(e)=>{
+     e.preventDefault();
+     await login(current,email,password)
+
+  }
+
   return (
-    <>
-      <nav
-        name="navbar"
-        className="flex  justify-between p-3 bg-[#071952] sticky top-0 text-white"
-      >
-        <ul>
-          <li>SRECIAN</li>
-        </ul>
-        <img src={menuBar} alt="" className="md:hidden " />
-      </nav>
-      <div className="bg-[#EEEDED]">
-        <div className="flex flex-col justify-center items-center md:h-screen">
-          <div>
-            <h1 className=" sm:text-4xl  md:text-6xl  uppercase flex justify-center font-signature">
-              skill fest
+    <div className="min-h-screen flex flex-col justify-center bg-Primary ">
+      <div className="text-center text-3xl  text-white font-semibold font-Poppins tracking-widest">
+        SKILL FEST
+      </div>
+      <div className="flex flex-col md:flex-row items-center md:justify-evenly md:px-24 m-2 ">
+        <div className="h-full">
+          <img src={LoginImg} alt="" className="hidden lg:block" />
+        </div>
+        <div className="w-full max-w-md bg-blend-saturation rounded-lg top-0 border border-white p-5">
+          <div className="border-b border-white ">
+            <h1 className=" text-center tracking-widest text-2xl text-white font-semibold uppercase">
+              Login
             </h1>
-            <img src={srecImg} alt="" className=" sm:w-72 md:w-[24rem] mt-8" />
           </div>
-          <div className="bg-[#0D1282] md:w-96  p-6 rounded-md md:mb-14 ">
-            <h1 className="flex items-center justify-center text-2xl text-white ">
-              Login <img src={adminImg} alt="" />
-            </h1>
-            <hr className="mt-3" />
-            <div className="mt-3 space-y-6 sm:text-sm md:text-lg">
-              <input
-                type="text"
-                placeholder="Email"
-                className="w-full p-2 rounded-md  outline-violet-800"
-              />
-              <input
-                type="text"
-                placeholder="Password"
-                className="w-full p-2 rounded-md  outline-violet-500 duration-75"
-              />
-              <Link
-                to="Layout"
-                className=" flex justify-center items-start border p-2 rounded-md w-full bg-[#F0DE36] hover:bg-[#F0DE36] active:bg-[#F1C93B] hover:scale-105 duration-150"
-              >
-                Login
-              </Link>
+          <div className="flex  w-full justify-evenly ">
+            <div
+              className={`w-1/2 flex py-4 cursor-pointer text-white  items-center justify-center font-semibold ${admin}`}
+              onClick={() => {
+                setAdmin("underline");
+                setUser("");
+                setCurrent({
+                  current:"user_main",
+                  to:"layout"
+                })
+              }}
+            >
+              USER
+            </div>
+            <div
+              className={`w-1/2 flex py-4 cursor-pointer items-center  text-white justify-center font-semibold  ${user}`}
+              onClick={() => {
+                setUser("underline");
+                setAdmin("");
+                setCurrent({
+                  current:"admin",
+                  to:"createuser"
+                })
+              }}
+            >
+              ADMIN
             </div>
           </div>
+          <form onSubmit={handleSubmit}>
+            <div className="p-3"></div>
+            <div className="px-3 py-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-white"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+                className="mt-1 p-2 w-full border rounded-md outline-none text-black"
+                placeholder="sample@example.com"
+                required
+              />
+            </div>
+
+            <div className="mb-4 px-3">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-white"
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                className="mt-1 p-2 w-full border rounded-md outline-none"
+                placeholder="********"
+                required
+              />
+            </div>
+            <div className="py-2 p-3">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full border border-white text-white font-semibold py-2 rounded-md duration-150"
+              >
+                Login
+              </button>
+            </div>
+          </form>
+          {error && (
+              <div
+                className="text-red-600"
+              >
+                {error}
+              </div>
+            )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

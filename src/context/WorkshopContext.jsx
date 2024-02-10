@@ -14,7 +14,7 @@ export const WorkshopReducer = (state, action) => {
       };
     case "DELETE_WORKSHOP":
       return {
-        workshop: state.events.filter((wor) => wor._id != action.payload._id),
+        workshop: state.workshop.filter((wor) => wor._id != action.payload._id),
       };
     default:
       return state;

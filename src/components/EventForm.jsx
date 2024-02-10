@@ -2,8 +2,10 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useEventContext } from "../hooks/useEventContext";
 import tick from '../assets/tick.gif'
+import {useAuthContext} from '../hooks/useAuthContext'
 
 const EventForm = () => {
+  const{user}=useAuthContext();
   const { dispatch } = useEventContext();
   const [status, setStatus] = useState("");
   const [title, setTitle] = useState("");
@@ -37,6 +39,7 @@ const EventForm = () => {
     const res = await axios.post("http://localhost:5000/api/events", neweve, {
       headers: {
         "Content-Type": "application/json",
+        "Authorization":`Bearer ${user.token}`
       },
     });
     const data = res.data;

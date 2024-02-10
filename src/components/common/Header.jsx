@@ -1,6 +1,11 @@
 import React from "react";
 import { HiOutlineSearch } from "react-icons/hi";
+import {useLogout} from '../../hooks/useLogout'
 const Header = () => {
+  const {logout}=useLogout();
+  const handleLogout=()=>{
+    logout();
+  }
   return (
     <div className="bg-white h-[64px] min-h-[64px] px-4 flex justify-between items-center border-b border-gray-200">
       <div className="relative">
@@ -14,15 +19,10 @@ const Header = () => {
           className="text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 rounded-md pl-11 pr-4"
         />
       </div>
-      <div
-        className="h-10 w-10 rounded-full bg-sky-500 bg-cover bg-no-repeat bg-center"
-        style={{
-          backgroundImage: 'url("https://source.unsplash.com/80x80?girl")',
-        }}
-      >
-        <span className="sr-only">Mohamed Musthaqeem</span>
+        <div>
+          <button className="p-1 bg-red-600 rounded-lg hover:bg-red-800 duration-150 " onClick={handleLogout} >Logout</button>
+        </div>
       </div>
-    </div>
   );
 };
 

@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useCompetitionContext } from "../hooks/useCompetitonContext";
-
+import {useAuthContext} from '../hooks/useAuthContext'
 const ComForm = () => {
+  const{user}=useAuthContext();
   const { dispatch } = useCompetitionContext();
   const [status, setStatus] = useState("");
   const [title, setTitle] = useState("");
@@ -36,6 +37,7 @@ const ComForm = () => {
     const res = await axios.post("http://localhost:5000/api/routes", newcom, {
       headers: {
         "Content-Type": "application/json",
+        "Authorization":`Bearer ${user.token}`
       },
     });
     const data = res.data;

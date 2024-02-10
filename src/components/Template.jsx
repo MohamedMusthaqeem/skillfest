@@ -1,12 +1,17 @@
 import axios from "axios";
 import React from "react";
 import { useCompetitionContext } from "../hooks/useCompetitonContext";
-
+import {useAuthContext} from '../hooks/useAuthContext'
 const Template = ({ compet }) => {
+  const {user}=useAuthContext();
   const { dispatch } = useCompetitionContext();
   const handleDelete = async () => {
     const res = await axios.delete(
-      "http://localhost:5000/api/routes/" + compet._id
+      "http://localhost:5000/api/routes/" + compet._id,{
+        headers:{
+          "Authorization":`Bearer ${user.token}`
+        }
+      }
     );
     console.log(res);
     if (res.status) {

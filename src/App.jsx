@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Deptlisting from "./pages/Deptlisting";
 import Mainpage from "./pages/Mainpage";
 import Layout from "./components/common/Layout";
 import Dashboard from "./pages/Dashboard";
@@ -9,6 +8,7 @@ import Competition from "./pages/Competition";
 import Report from "./pages/Report";
 import Support from "./pages/Support";
 import About from "./pages/About";
+import Createuser from "./pages/Createuser";
 
 function App() {
   const listing = [
@@ -61,6 +61,7 @@ function App() {
     <>
           <Routes>
             <Route path="/" element={<Mainpage />} />
+                 <Route path="createuser" element={<Createuser/>}/>
             <Route path="layout" element={<Layout />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="events" element={<Events />} />
