@@ -1,5 +1,6 @@
 import { useReactToPrint } from "react-to-print";
 import { useMemo, useRef, useState,useEffect } from "react";
+import {useAuthContext} from '../hooks/useAuthContext'
 import {
   useReactTable,
   getCoreRowModel,
@@ -13,17 +14,23 @@ import axios from "axios";
 
 
 const Report = () => {
+  const {user}=useAuthContext();
   const [regsiter, setRegister] = useState([]);
   useEffect(() => {
     const fetchRegister = async () => {
-      const res = await axios.get("http://localhost:5000/api/register");
+      const res = await axios.get("http://localhost:5000/api/register/all",{headers:{
+        "Authorization":`Bearer ${user.token}`
+      }
+    });
       const data = res.data;
       if (res.status) {
         setRegister(data);
         console.log(data);
       }
     };
-    fetchRegister();
+    if(user){
+      fetchRegister();
+    }
   },[]);
   //   "Unique_Id": 1,
   // "Name": "Batsheva",

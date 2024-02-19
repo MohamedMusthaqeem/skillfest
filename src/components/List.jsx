@@ -1,11 +1,18 @@
 import React from 'react'
 import {useUserContext} from '../hooks/useUserContext'
 import axios from 'axios';
+import {useAuthContext} from '../hooks/useAuthContext'
 const List = ({user}) => {
+  const {user :users}=useAuthContext();
   const {dispatchs}=useUserContext();
   const handleDelete = async () => {
     const res = await axios.delete(
-      "http://localhost:5000/api/user_main/"+ user._id
+      "http://localhost:5000/api/user_main/"+ user._id,
+      {
+        headers:{
+          "Authorization":`Bearer ${users.token}`
+        }
+      }
     );
     console.log(res);
     if (res.status) {

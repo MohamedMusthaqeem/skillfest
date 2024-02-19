@@ -5,7 +5,7 @@ import {useUserContext} from '../hooks/useUserContext'
 export const useSignup = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
-  const { dispatch } = useAuthContext();
+  const { dispatch,user } = useAuthContext();
   const{dispatchs}=useUserContext();
   const navigate=useNavigate();
 
@@ -13,7 +13,7 @@ export const useSignup = () => {
   const signup = async (user_name, email, password) => {
     const res = await fetch("http://localhost:5000/api/user_main/signup", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Authorization":`Bearer ${user.token}` },
       body: JSON.stringify({ user_name, email, password }),
     });
 

@@ -3,10 +3,11 @@ import Header1 from "../components/common/Header1";
 import { useUserContext } from "../hooks/useUserContext";
 import { useSignup } from "../hooks/useSignup";
 import axios from "axios";
+import {useAuthContext} from '../hooks/useAuthContext'
 import List from "../components/List";
 
 const Createuser = () => {
-  const [user, setUser] = useState([]);
+  const {user}=useAuthContext();
   const { signup, isLoading, error } = useSignup();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -20,12 +21,15 @@ const Createuser = () => {
   useEffect(() => {
     const getreqUser = async () => {
       const res = await axios.get(
-        "http://localhost:5000/api/user_main/get_user"
+        "http://localhost:5000/api/user_main/get_user",
+        {headers:{
+          "Authorization":`Bearer ${user.token}`
+        }
+      }
       );
       const data = res.data;
       if (res.status) {
         console.log(data);
-        setUser(data);
         dispatchs({
           type: "SET_USER",
           payload: data,
