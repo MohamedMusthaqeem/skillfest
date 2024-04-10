@@ -1,17 +1,18 @@
 import axios from "axios";
 import React from "react";
 import { useWorkshopContext } from "../hooks/useWorkshopContext";
-import {useAuthContext} from '../hooks/useAuthContext';
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Tempwor = ({ compet }) => {
-  const{user}=useAuthContext();
+  const { user } = useAuthContext();
   const { dispatch } = useWorkshopContext();
   const handleDelete = async () => {
     const res = await axios.delete(
-      "http://localhost:5000/api/workshops/"+compet._id ,{
-        headers:{
-          "Authorization":`Bearer ${user.token}`
-        }
+      "http://localhost:5000/api/workshops/" + compet._id,
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       }
     );
     console.log(res);
@@ -43,6 +44,10 @@ const Tempwor = ({ compet }) => {
           <span className="font-normal  text-gray-800">{compet.date}</span>
         </h1>
         <h1 className="font-poppins font-medium text-xl text-blue-700">
+          End Date:{" "}
+          <span className="font-normal  text-gray-800">{compet.end_date}</span>
+        </h1>
+        <h1 className="font-poppins font-medium text-xl text-blue-700">
           Time:{" "}
           <span className="font-normal  text-gray-800">{compet.time}</span>
         </h1>
@@ -52,11 +57,15 @@ const Tempwor = ({ compet }) => {
         </h1>
         <h1 className="font-poppins font-medium text-xl text-blue-700">
           No.of.Hour:{" "}
-          <span className="font-normal  text-gray-800">{compet.no_of_hours}</span>
+          <span className="font-normal  text-gray-800">
+            {compet.no_of_hours}
+          </span>
         </h1>
         <h1 className="font-poppins font-medium text-xl text-blue-700">
           No.of.Days:{" "}
-          <span className="font-normal  text-gray-800">{compet.no_of_days}</span>
+          <span className="font-normal  text-gray-800">
+            {compet.no_of_days}
+          </span>
         </h1>
         <h1 className="font-poppins font-medium text-xl text-blue-700">
           Outcomes:{" "}
@@ -81,6 +90,10 @@ const Tempwor = ({ compet }) => {
           <span className="font-normal  text-gray-800">
             {compet.supportnumtwo}
           </span>
+        </h1>
+        <h1 className="font-poppins font-medium text-xl text-blue-700">
+          Venue:{" "}
+          <span className="font-normal  text-gray-800">{compet.venue}</span>
         </h1>
         <div>
           <button

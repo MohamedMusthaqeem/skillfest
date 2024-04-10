@@ -1,11 +1,11 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useEventContext } from "../hooks/useEventContext";
-import tick from '../assets/tick.gif'
-import {useAuthContext} from '../hooks/useAuthContext'
+import tick from "../assets/tick.gif";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const EventForm = () => {
-  const{user}=useAuthContext();
+  const { user } = useAuthContext();
   const { dispatch } = useEventContext();
   const [status, setStatus] = useState("");
   const [title, setTitle] = useState("");
@@ -19,6 +19,7 @@ const EventForm = () => {
   const [third_prize, setThird] = useState("");
   const [supportnumone, setSupportone] = useState("");
   const [supportnumtwo, setSupporttwo] = useState("");
+  const [venue, setVenue] = useState("");
   const [error, setError] = useState("");
   //form submission function
   const handleSubmit = async (e) => {
@@ -35,11 +36,12 @@ const EventForm = () => {
       third_prize,
       supportnumone,
       supportnumtwo,
+      venue,
     };
     const res = await axios.post("http://localhost:5000/api/events", neweve, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization":`Bearer ${user.token}`
+        Authorization: `Bearer ${user.token}`,
       },
     });
     const data = res.data;
@@ -60,6 +62,7 @@ const EventForm = () => {
       setStatus("");
       setSupportone("");
       setSupporttwo("");
+      setVenue("");
       dispatch({ type: "CREATE_EVENT", payload: data });
       console.log("new events added", res.data);
     }
@@ -201,6 +204,17 @@ const EventForm = () => {
                 setSupporttwo(e.target.value);
               }}
               value={supportnumtwo}
+              className="py-1 px-2"
+            />
+          </div>
+          <div className="flex flex-col  w-1/2 space-x-2">
+            <h1>Venue</h1>
+            <input
+              type="text"
+              onChange={(e) => {
+                setVenue(e.target.value);
+              }}
+              value={venue}
               className="py-1 px-2"
             />
           </div>

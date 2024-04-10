@@ -1,6 +1,9 @@
 import { useReactToPrint } from "react-to-print";
-import { useMemo, useRef, useState,useEffect } from "react";
-import {useAuthContext} from '../hooks/useAuthContext'
+import { useMemo, useRef, useState, useEffect } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useDownloadExcel } from "react-export-table-to-excel";
+import { FaRegFilePdf } from "react-icons/fa";
+import { SiMicrosoftexcel } from "react-icons/si";
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,27 +14,32 @@ import {
 } from "@tanstack/react-table";
 import axios from "axios";
 
-
-
 const Report = () => {
-  const {user}=useAuthContext();
+  const { user } = useAuthContext();
   const [regsiter, setRegister] = useState([]);
   useEffect(() => {
     const fetchRegister = async () => {
-      const res = await axios.get("http://localhost:5000/api/register/all",{headers:{
-        "Authorization":`Bearer ${user.token}`
-      }
-    });
+      const res = await axios.get("http://localhost:5000/api/register/all", {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       const data = res.data;
       if (res.status) {
         setRegister(data);
         console.log(data);
       }
     };
-    if(user){
+    if (user) {
       fetchRegister();
     }
-  },[]);
+  }, []);
+  const tableref = useRef(null);
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableref.current,
+    filename: "skillfest",
+    sheet: "Skillfest",
+  });
   //   "Unique_Id": 1,
   // "Name": "Batsheva",
   // "College": "National Ilan University",
@@ -40,12 +48,8 @@ const Report = () => {
   // "Phone_No": "6712411257",
   // "Email": "bmallinar0@slate.com"
   const data = useMemo(() => regsiter);
-
+  console.log(data);
   const columns = [
-    {
-      header: "UNIQUE_ID",
-      accessorKey: "_id",
-    },
     {
       header: "NAME",
       accessorKey: "name",
@@ -73,6 +77,37 @@ const Report = () => {
     {
       header: "AMOUNT",
       accessorKey: "fees",
+    },
+    {
+      header: "Upload",
+      accessorKey: "upload",
+      cell: (row) => {
+        console.log("Row Data:", row.row.original.upload);
+        const uploadData = row.row.original.upload; // Assuming "upload" field contains the data for customization
+        // Custom logic to render uploadData in a custom template
+        return (
+          <div className="custom-upload-template">
+            {/* Render uploadData using your custom template */}
+            {uploadData && (
+              <span>
+                {
+                  <a
+                    href={uploadData}
+                    download
+                    target="_blank"
+                    className="bg-green-600 p-2 text-white rounded-2xl hover:scale-105 hover:duration-100"
+                  >
+                    Download
+                  </a>
+                }
+              </span>
+            )}
+            {!uploadData && (
+              <span className="text-red-600">No Upload Data</span>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
@@ -140,16 +175,24 @@ const Report = () => {
         </button> */}
         <button
           onClick={generateUserPdf}
-          className="bg-[#071952] text-white p-2 rounded-md active:scale-105 duration-150 "
+          className="bg-white text-red-700 font-bold flex gap-2 p-2 rounded-md active:scale-105 duration-150 "
         >
-          Print Report
+          <FaRegFilePdf className="text-red-700 text-2xl" />
+          <p>PDF</p>
+        </button>
+        <button
+          onClick={onDownload}
+          className="bg-white flex gap-2 font-bold text-green-700 p-2 rounded-md active:scale-105 duration-150 "
+        >
+          <SiMicrosoftexcel className="text-green-700 text-2xl" />
+          <p>Excel</p>
         </button>
       </div>
       <div className="w3-container mt-2 " ref={saveToPdf}>
         <h1 className="flex flex-col items-center justify-center text-2xl pb-5 font-bold">
           Report-Skillfest:2023
         </h1>
-        <table className="w3-table-all ">
+        <table className="w3-table-all " ref={tableref}>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>

@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useCompetitionContext } from "../hooks/useCompetitonContext";
-import {useAuthContext} from '../hooks/useAuthContext'
+import { useAuthContext } from "../hooks/useAuthContext";
 const ComForm = () => {
-  const{user}=useAuthContext();
+  const { user } = useAuthContext();
   const { dispatch } = useCompetitionContext();
   const [status, setStatus] = useState("");
   const [title, setTitle] = useState("");
@@ -17,6 +17,7 @@ const ComForm = () => {
   const [third_prize, setThird] = useState("");
   const [supportnumone, setSupportone] = useState("");
   const [supportnumtwo, setSupporttwo] = useState("");
+  const [venue, setVenue] = useState("");
   const [error, setError] = useState("");
   //form submission function
   const handleSubmit = async (e) => {
@@ -33,11 +34,12 @@ const ComForm = () => {
       third_prize,
       supportnumone,
       supportnumtwo,
+      venue,
     };
     const res = await axios.post("http://localhost:5000/api/routes", newcom, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization":`Bearer ${user.token}`
+        Authorization: `Bearer ${user.token}`,
       },
     });
     const data = res.data;
@@ -58,6 +60,7 @@ const ComForm = () => {
       setStatus("");
       setSupportone("");
       setSupporttwo("");
+      setVenue("");
       dispatch({ type: "CREATE_COMPETITION", payload: data });
       console.log("new competiton added", res.data);
     }
@@ -199,6 +202,17 @@ const ComForm = () => {
                 setSupporttwo(e.target.value);
               }}
               value={supportnumtwo}
+              className="py-1 px-2"
+            />
+          </div>
+          <div className="flex flex-col  w-1/2 space-x-2">
+            <h1>Venue</h1>
+            <input
+              type="text"
+              onChange={(e) => {
+                setVenue(e.target.value);
+              }}
+              value={venue}
               className="py-1 px-2"
             />
           </div>

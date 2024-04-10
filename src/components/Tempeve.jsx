@@ -1,19 +1,20 @@
 import axios from "axios";
 import React from "react";
 import { useEventContext } from "../hooks/useEventContext";
-import {useAuthContext} from '../hooks/useAuthContext'
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Templateeve = ({ compet }) => {
-  const {user}=useAuthContext();
+  const { user } = useAuthContext();
   const { dispatch } = useEventContext();
   const handleDelete = async () => {
     const res = await axios.delete(
-      "http://localhost:5000/api/events/" + compet._id
-    ,{
-      headers:{
-        "Authorization":`Bearer ${user.token}`
+      "http://localhost:5000/api/events/" + compet._id,
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       }
-    });
+    );
     console.log(res);
     if (res.status) {
       dispatch({ type: "DELETE_EVENT", payload: res.data });
@@ -83,6 +84,10 @@ const Templateeve = ({ compet }) => {
           <span className="font-normal  text-gray-800">
             {compet.supportnumtwo}
           </span>
+        </h1>
+        <h1 className="font-poppins font-medium text-xl text-blue-700">
+          Venue:{" "}
+          <span className="font-normal  text-gray-800">{compet.venue}</span>
         </h1>
         <div>
           <button
