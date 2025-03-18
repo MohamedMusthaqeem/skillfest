@@ -6,6 +6,8 @@ import {
   FcIdea,
   FcAssistant,
   FcInfo,
+  FcAddressBook,
+  FcCollaboration,
 } from "react-icons/fc";
 
 export const DASHBOARD_TOP_LINKS = [
@@ -32,6 +34,18 @@ export const DASHBOARD_TOP_LINKS = [
     name: "Competition",
     path: "competition",
     icon: <FcIdea size={25} />,
+  },
+  {
+    key: "content",
+    name: "Content",
+    path: "content",
+    icon: <FcAddressBook size={25} />,
+  },
+  {
+    key: "feedback",
+    name: "Feedbacks",
+    path: "feedback",
+    icon: <FcCollaboration size={25} />,
   },
   {
     key: "report",

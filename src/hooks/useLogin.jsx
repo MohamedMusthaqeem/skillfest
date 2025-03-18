@@ -1,20 +1,23 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
   const { dispatch } = useAuthContext();
 
   //login function
-  const login = async (current,email, password) => {
-    const res = await fetch(`http://localhost:5000/api/${current.current}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email,password }),
-    });
+  const login = async (current, email, password) => {
+    const res = await fetch(
+      `https://skillfest-backend.onrender.com/api/${current.current}/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      }
+    );
 
     const json = await res.json();
 

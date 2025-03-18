@@ -2,13 +2,15 @@ import axios from "axios";
 import React from "react";
 import { useEventContext } from "../hooks/useEventContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import config from "../config";
 
 const Templateeve = ({ compet }) => {
+  const { SERVER_ADDRESS } = config;
   const { user } = useAuthContext();
   const { dispatch } = useEventContext();
   const handleDelete = async () => {
     const res = await axios.delete(
-      "http://localhost:5000/api/events/" + compet._id,
+      `${SERVER_ADDRESS}/api/events/` + compet._id,
       {
         headers: {
           Authorization: `Bearer ${user.token}`,

@@ -2,18 +2,20 @@ import React, { useEffect } from "react";
 import Workform from "../components/Workform";
 import Tempwor from "../components/Tempwor";
 import { useWorkshopContext } from "../hooks/useWorkshopContext";
-import {useAuthContext} from '../hooks/useAuthContext'
+import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
+import config from "../config";
 
 const Workshop = () => {
-  const {user}=useAuthContext();
+  const { SERVER_ADDRESS } = config;
+  const { user } = useAuthContext();
   const { workshop, dispatch } = useWorkshopContext();
   useEffect(() => {
     const fetchWorkshop = async () => {
-      const res = await axios.get("http://localhost:5000/api/workshops",{
-        headers:{
-          "Authorization":`Bearer ${user.token}`
-        }
+      const res = await axios.get(`${SERVER_ADDRESS}/api/workshops`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       });
       const data = res.data;
       if (res.status) {
@@ -29,7 +31,9 @@ const Workshop = () => {
       <Workform />
       <h1 className="font-poppins text-xl font-semibold"> Created Workshops</h1>
       {workshop &&
-            workshop.map((workshops) => <Tempwor key={workshops._id} compet={workshops} />)}
+        workshop.map((workshops) => (
+          <Tempwor key={workshops._id} compet={workshops} />
+        ))}
     </div>
   );
 };

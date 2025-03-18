@@ -3,8 +3,10 @@ import { useState } from "react";
 import { useWorkshopContext } from "../hooks/useWorkshopContext";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
+import config from "../config";
 
 const Workform = () => {
+  const { SERVER_ADDRESS } = config;
   const { user } = useAuthContext();
   const { dispatch } = useWorkshopContext();
   const [status, setStatus] = useState("");
@@ -42,16 +44,12 @@ const Workform = () => {
       supportnumtwo,
       venue,
     };
-    const res = await axios.post(
-      "http://localhost:5000/api/workshops",
-      newwork,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
-    );
+    const res = await axios.post(`${SERVER_ADDRESS}/api/workshops`, newwork, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
     const data = res.data;
     if (!res.status) {
       setError(res.err.message);

@@ -3,11 +3,13 @@ import Header1 from "../components/common/Header1";
 import { useUserContext } from "../hooks/useUserContext";
 import { useSignup } from "../hooks/useSignup";
 import axios from "axios";
-import {useAuthContext} from '../hooks/useAuthContext'
+import { useAuthContext } from "../hooks/useAuthContext";
 import List from "../components/List";
+import config from "../config";
 
 const Createuser = () => {
-  const {user}=useAuthContext();
+  const { SERVER_ADDRESS } = config;
+  const { user } = useAuthContext();
   const { signup, isLoading, error } = useSignup();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -20,13 +22,11 @@ const Createuser = () => {
   const { users, dispatchs } = useUserContext();
   useEffect(() => {
     const getreqUser = async () => {
-      const res = await axios.get(
-        "http://localhost:5000/api/user_main/get_user",
-        {headers:{
-          "Authorization":`Bearer ${user.token}`
-        }
-      }
-      );
+      const res = await axios.get(`${SERVER_ADDRESS}/api/user_main/get_user`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       const data = res.data;
       if (res.status) {
         console.log(data);
@@ -118,7 +118,7 @@ const Createuser = () => {
             <h1>{error}</h1>
           </div>
         )}
-        <div >
+        <div>
           {users && users.map((usr) => <List key={usr.email} user={usr} />)}
         </div>
       </div>

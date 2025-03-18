@@ -3,16 +3,18 @@ import axios from "axios";
 import Template from "../components/Template";
 import ComForm from "../components/ComForm";
 import { useCompetitionContext } from "../hooks/useCompetitonContext";
-import {useAuthContext} from '../hooks/useAuthContext'
+import { useAuthContext } from "../hooks/useAuthContext";
+import config from "../config";
 const Competition = () => {
-  const{user}=useAuthContext();
+  const { SERVER_ADDRESS } = config;
+  const { user } = useAuthContext();
   const { competitions, dispatch } = useCompetitionContext();
   useEffect(() => {
     const fetchCompetitions = async () => {
-      const res = await axios.get("http://localhost:5000/api/routes",{
-        headers:{
-          "Authorization":`Bearer ${user.token}`
-        }
+      const res = await axios.get(`${SERVER_ADDRESS}/api/routes`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       });
       const data = res.data;
       if (res.status) {

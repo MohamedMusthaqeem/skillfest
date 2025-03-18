@@ -9,6 +9,8 @@ import Report from "./pages/Report";
 import Support from "./pages/Support";
 import About from "./pages/About";
 import Createuser from "./pages/Createuser";
+import Content from "./pages/Content";
+import Feedback from "./pages/Feedback";
 
 function App() {
   const listing = [
@@ -59,19 +61,21 @@ function App() {
   ];
   return (
     <>
-          <Routes>
-            <Route path="/" element={<Mainpage />} />
-                 <Route path="createuser" element={<Createuser/>}/>
-            <Route path="layout" element={<Layout />}>
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="events" element={<Events />} />
-              <Route path="workshop" element={<Workshop />} />
-              <Route path="competition" element={<Competition />} />
-              <Route path="report" element={<Report />} />
-              <Route path="support" element={<Support />} />
-              <Route path="about" element={<About />} />
-            </Route>
-          </Routes>
+      <Routes>
+        <Route path="/" element={<Mainpage />} />
+        <Route path="createuser" element={<Createuser />} />
+        <Route path="layout" element={<Layout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="events" element={<Events />} />
+          <Route path="workshop" element={<Workshop />} />
+          <Route path="competition" element={<Competition />} />
+          <Route path="report" element={<Report />} />
+          <Route path="support" element={<Support />} />
+          <Route path="about" element={<About />} />
+          <Route path="content" element={<Content />} />
+          <Route path="feedback" element={<Feedback />} />
+        </Route>
+      </Routes>
     </>
   );
 }

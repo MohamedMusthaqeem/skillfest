@@ -2,13 +2,15 @@ import axios from "axios";
 import React from "react";
 import { useWorkshopContext } from "../hooks/useWorkshopContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import config from "../config";
 
 const Tempwor = ({ compet }) => {
+  const { SERVER_ADDRESS } = config;
   const { user } = useAuthContext();
   const { dispatch } = useWorkshopContext();
   const handleDelete = async () => {
     const res = await axios.delete(
-      "http://localhost:5000/api/workshops/" + compet._id,
+      `${SERVER_ADDRESS}/api/workshops/` + compet._id,
       {
         headers: {
           Authorization: `Bearer ${user.token}`,

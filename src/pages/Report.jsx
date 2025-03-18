@@ -13,13 +13,15 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import axios from "axios";
+import config from "../config";
 
 const Report = () => {
+  const { SERVER_ADDRESS } = config;
   const { user } = useAuthContext();
   const [regsiter, setRegister] = useState([]);
   useEffect(() => {
     const fetchRegister = async () => {
-      const res = await axios.get("http://localhost:5000/api/register/all", {
+      const res = await axios.get(`${SERVER_ADDRESS}/api/register/all`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
