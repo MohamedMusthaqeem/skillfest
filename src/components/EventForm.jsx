@@ -58,7 +58,7 @@ const EventForm = () => {
       });
       setError(null);
     } catch (err) {
-      setError("Failed to create event");
+      setError("Failed to create event or check your input type");
     }
   };
 

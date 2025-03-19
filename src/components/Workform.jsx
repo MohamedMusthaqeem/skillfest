@@ -34,6 +34,7 @@ const Workform = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log(formData);
       const res = await axios.post(
         `${SERVER_ADDRESS}/api/workshops`,
         formData,
@@ -44,7 +45,8 @@ const Workform = () => {
           },
         }
       );
-      dispatch({ type: "CREATE_WORKSHOP", payload: res.data });
+      const data = res.data;
+      await dispatch({ type: "CREATE_WORKSHOP", payload: data });
       setFormData({
         title: "",
         description: "",
@@ -63,20 +65,20 @@ const Workform = () => {
       });
       setError("");
     } catch (err) {
-      setError("Failed to add workshop");
+      setError("Failed to add workshop or give correct type data");
     }
   };
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "mohamed");
+    const formData1 = new FormData();
+    formData1.append("file", file);
+    formData1.append("upload_preset", "mohamed");
 
     try {
       const res = await axios.post(
         `https://api.cloudinary.com/v1_1/ddajwuci9/image/upload`,
-        formData
+        formData1
       );
       setUploadStatus("✅ Uploaded");
       setFormData({ ...formData, imageurl: res.data.secure_url });
@@ -102,8 +104,8 @@ const Workform = () => {
           { label: "No. of Days", name: "no_of_days", type: "number" },
           { label: "Outcomes", name: "outcomes", type: "textarea" },
           { label: "Incharge", name: "incharge", type: "text" },
-          { label: "Support Number 1", name: "supportnumone", type: "text" },
-          { label: "Support Number 2", name: "supportnumtwo", type: "text" },
+          { label: "Support Number 1", name: "supportnumone", type: "number" },
+          { label: "Support Number 2", name: "supportnumtwo", type: "number" },
           { label: "Venue", name: "venue", type: "text" },
         ].map(({ label, name, type }) => (
           <div key={name}>
