@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import Header1 from "../components/common/Header1";
 import { useUserContext } from "../hooks/useUserContext";
 import { useSignup } from "../hooks/useSignup";
@@ -14,11 +15,12 @@ const Createuser = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
     signup(name, email, password);
   };
-  //
+
   const { users, dispatchs } = useUserContext();
   useEffect(() => {
     const getreqUser = async () => {
@@ -29,7 +31,6 @@ const Createuser = () => {
       });
       const data = res.data;
       if (res.status) {
-        console.log(data);
         dispatchs({
           type: "SET_USER",
           payload: data,
@@ -38,89 +39,60 @@ const Createuser = () => {
     };
     getreqUser();
   }, []);
+
   return (
-    <div>
-      <div>
-        <Header1 />
-      </div>
-      <div>
-        <form action="" className="w-1/4 m-5" onSubmit={handleSubmit}>
-          <div>
-            <h1 className="font-poppins text-2xl font-semibold py-3">
-              Create User
-            </h1>
-          </div>
-          <div className="mb-4 px-3">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-800"
-            >
-              Username
-            </label>
+    <div className="min-h-screen bg-gradient-to-r from-blue-900 to-blue-600 p-4 flex flex-col items-center">
+      <Header1 />
+      <div className="bg-white shadow-2xl rounded-lg p-8 max-w-lg w-full mt-6">
+        <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
+          Create User
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative">
+            <FaUser className="absolute left-3 top-3 text-gray-500" />
             <input
               type="text"
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
+              onChange={(e) => setName(e.target.value)}
               value={name}
-              className="mt-1 p-2 w-full border rounded-md outline-none"
-              placeholder="********"
+              className="w-full pl-10 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Username"
               required
             />
           </div>
-          <div className="mb-4 px-3">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-800"
-            >
-              User_Email
-            </label>
+          <div className="relative">
+            <FaEnvelope className="absolute left-3 top-3 text-gray-500" />
             <input
               type="email"
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setEmail(e.target.value)}
               value={email}
-              className="mt-1 p-2 w-full border rounded-md outline-none"
-              placeholder="********"
+              className="w-full pl-10 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Email Address"
               required
             />
           </div>
-          <div className="mb-4 px-3">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-800"
-            >
-              Password
-            </label>
+          <div className="relative">
+            <FaLock className="absolute left-3 top-3 text-gray-500" />
             <input
               type="password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
               value={password}
-              className="mt-1 p-2 w-full border rounded-md outline-none"
-              placeholder="********"
+              className="w-full pl-10 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Password"
               required
             />
           </div>
-          <div className="flex justify-center">
-            <button
-              className="p-2 bg-Primary text-white rounded-2xl text-center duration-200 hover:scale-105 "
-              disabled={isLoading}
-            >
-              Create User
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white font-semibold py-3 rounded-md hover:bg-blue-700 transition-all"
+            disabled={isLoading}
+          >
+            Create User
+          </button>
         </form>
-        {error && (
-          <div className="text-red-600">
-            <h1>{error}</h1>
-          </div>
-        )}
-        <div>
-          {users && users.map((usr) => <List key={usr.email} user={usr} />)}
-        </div>
+        {error && <p className="text-red-600 text-center mt-4">{error}</p>}
+      </div>
+      <div className="mt-6 w-full max-w-lg">
+        {users && users.map((usr) => <List key={usr.email} user={usr} />)}
       </div>
     </div>
   );

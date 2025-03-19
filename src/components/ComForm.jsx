@@ -1,8 +1,9 @@
-import axios from "axios";
 import React, { useState } from "react";
+import axios from "axios";
 import { useCompetitionContext } from "../hooks/useCompetitonContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import config from "../config";
+
 const ComForm = () => {
   const { SERVER_ADDRESS } = config;
   const { user } = useAuthContext();
@@ -21,7 +22,7 @@ const ComForm = () => {
   const [supportnumtwo, setSupporttwo] = useState("");
   const [venue, setVenue] = useState("");
   const [error, setError] = useState("");
-  //form submission function
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newcom = {
@@ -38,18 +39,14 @@ const ComForm = () => {
       supportnumtwo,
       venue,
     };
-    const res = await axios.post(`${SERVER_ADDRESS}/api/routes`, newcom, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
-    const data = res.data;
-    if (!res.status) {
-      setError(res.err.message);
-    }
-    if (res.status == 200) {
-      setError(null);
+    try {
+      const res = await axios.post(`${SERVER_ADDRESS}/api/routes`, newcom, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      dispatch({ type: "CREATE_COMPETITION", payload: res.data });
       setTitle("");
       setAmount("");
       setDate("");
@@ -63,172 +60,112 @@ const ComForm = () => {
       setSupportone("");
       setSupporttwo("");
       setVenue("");
-      dispatch({ type: "CREATE_COMPETITION", payload: data });
-      console.log("new competiton added", res.data);
+    } catch (err) {
+      setError("Failed to add competition");
     }
   };
-  // handle file upload
-  const cloudname = "ddajwuci9";
 
   const handleFile = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "mohamed");
-    axios
-      .post(
-        `https://api.cloudinary.com/v1_1/${cloudname}/image/upload`,
+    try {
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/ddajwuci9/image/upload`,
         formData
-      )
-      .then((res) => {
-        setStatus("✅");
-        setImage(res.data.secure_url);
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
+      );
+      setStatus("✅");
+      setImage(res.data.secure_url);
+    } catch (err) {
+      console.error("Image upload failed", err);
+    }
   };
+
   return (
-    <div>
-      <div>
-        <form className="space-y-3">
-          <div className="flex flex-col w-1/2 space-x-2 ">
-            <h1>Title:</h1>
+    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+      <h1 className="text-2xl font-bold text-blue-700 mb-4">Add Competition</h1>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="flex flex-col">
+          <label className="font-medium text-gray-700">Title</label>
+          <input
+            className="border p-2 rounded-md"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="font-medium text-gray-700">Description</label>
+          <textarea
+            className="border p-2 rounded-md"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="font-medium text-gray-700">Image</label>
+          <input
+            className="border p-2 rounded-md"
+            type="file"
+            onChange={handleFile}
+          />
+          {status && <p className="text-green-500">{status}</p>}
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Date</label>
             <input
-              type="text"
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
-              value={title}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Description:</h1>
-            <textarea
-              onChange={(e) => {
-                setDescription(e.target.value);
-              }}
-              value={description}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Image:</h1>
-            <div className="flex space-x-1">
-              <input type="file" onChange={handleFile} className="py-1 px-2" />
-              <p>{status}</p>
-            </div>
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Date:</h1>
-            <input
+              className="border p-2 rounded-md"
               type="date"
-              onChange={(e) => {
-                setDate(e.target.value);
-              }}
               value={date}
-              className="py-1 px-2"
+              onChange={(e) => setDate(e.target.value)}
+              required
             />
           </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Time:</h1>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Time</label>
             <input
+              className="border p-2 rounded-md"
               type="time"
-              onChange={(e) => {
-                setTime(e.target.value);
-              }}
               value={time}
-              className="py-1 px-2"
+              onChange={(e) => setTime(e.target.value)}
+              required
             />
           </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Amount:</h1>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Amount</label>
             <input
+              className="border p-2 rounded-md"
               type="number"
-              onChange={(e) => {
-                setAmount(e.target.value);
-              }}
               value={amount}
-              className="py-1 px-2"
+              onChange={(e) => setAmount(e.target.value)}
+              required
             />
           </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>First Prize</h1>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Venue</label>
             <input
-              type="number"
-              onChange={(e) => {
-                setFirst(e.target.value);
-              }}
-              value={first_prize}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Second Prize</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setSecond(e.target.value);
-              }}
-              value={second_prize}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Third Prize</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setThird(e.target.value);
-              }}
-              value={third_prize}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Support Number1:</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setSupportone(e.target.value);
-              }}
-              value={supportnumone}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Support Number2:</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setSupporttwo(e.target.value);
-              }}
-              value={supportnumtwo}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Venue</h1>
-            <input
+              className="border p-2 rounded-md"
               type="text"
-              onChange={(e) => {
-                setVenue(e.target.value);
-              }}
               value={venue}
-              className="py-1 px-2"
+              onChange={(e) => setVenue(e.target.value)}
+              required
             />
           </div>
-          <div>
-            <button
-              className="p-2 rounded-md bg-blue-950 text-white cursor-pointer"
-              onClick={handleSubmit}
-            >
-              Add Competition
-            </button>
-            {error && <div>{error}</div>}
-          </div>
-        </form>
-      </div>
+        </div>
+        <button
+          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+          type="submit"
+        >
+          Add Competition
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
+      </form>
     </div>
   );
 };

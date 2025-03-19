@@ -7,18 +7,21 @@ import { SiMicrosoftexcel } from "react-icons/si";
 import {
   useReactTable,
   getCoreRowModel,
-  flexRender,
-  getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
+
 import axios from "axios";
 import config from "../config";
 
 const Report = () => {
   const { SERVER_ADDRESS } = config;
   const { user } = useAuthContext();
-  const [regsiter, setRegister] = useState([]);
+  const [register, setRegister] = useState([]);
+  const tableRef = useRef(null);
+  const saveToPdf = useRef();
+
   useEffect(() => {
     const fetchRegister = async () => {
       const res = await axios.get(`${SERVER_ADDRESS}/api/register/all`, {
@@ -26,204 +29,127 @@ const Report = () => {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      const data = res.data;
-      if (res.status) {
-        setRegister(data);
-        console.log(data);
-      }
+      if (res.status) setRegister(res.data);
     };
-    if (user) {
-      fetchRegister();
-    }
-  }, []);
-  const tableref = useRef(null);
+    if (user) fetchRegister();
+  }, [user]);
+
   const { onDownload } = useDownloadExcel({
-    currentTableRef: tableref.current,
-    filename: "skillfest",
-    sheet: "Skillfest",
+    currentTableRef: tableRef.current,
+    filename: "Skillfest_Report",
+    sheet: "Report",
   });
-  //   "Unique_Id": 1,
-  // "Name": "Batsheva",
-  // "College": "National Ilan University",
-  // "Year": 1987,
-  // "Event": "Business Development",
-  // "Phone_No": "6712411257",
-  // "Email": "bmallinar0@slate.com"
-  const data = useMemo(() => regsiter);
-  console.log(data);
+
+  const data = useMemo(() => register, [register]);
   const columns = [
-    {
-      header: "NAME",
-      accessorKey: "name",
-    },
-    {
-      header: "COLLEGE",
-      accessorKey: "college",
-    },
-    {
-      header: "YEAR",
-      accessorKey: "year",
-    },
-    {
-      header: "EVENT",
-      accessorKey: "event_name",
-    },
-    {
-      header: "PHONE_NO",
-      accessorKey: "phone_no",
-    },
-    {
-      header: "EMAIL",
-      accessorKey: "email",
-    },
-    {
-      header: "AMOUNT",
-      accessorKey: "fees",
-    },
+    { header: "Name", accessorKey: "name" },
+    { header: "College", accessorKey: "college" },
+    { header: "Year", accessorKey: "year" },
+    { header: "Event", accessorKey: "event_name" },
+    { header: "Phone No", accessorKey: "phone_no" },
+    { header: "Email", accessorKey: "email" },
+    { header: "Amount", accessorKey: "fees" },
     {
       header: "Upload",
       accessorKey: "upload",
       cell: (row) => {
-        console.log("Row Data:", row.row.original.upload);
-        const uploadData = row.row.original.upload; // Assuming "upload" field contains the data for customization
-        // Custom logic to render uploadData in a custom template
-        return (
-          <div className="custom-upload-template">
-            {/* Render uploadData using your custom template */}
-            {uploadData && (
-              <span>
-                {
-                  <a
-                    href={uploadData}
-                    download
-                    target="_blank"
-                    className="bg-green-600 p-2 text-white rounded-2xl hover:scale-105 hover:duration-100"
-                  >
-                    Download
-                  </a>
-                }
-              </span>
-            )}
-            {!uploadData && (
-              <span className="text-red-600">No Upload Data</span>
-            )}
-          </div>
+        const uploadData = row.row.original.upload;
+        return uploadData ? (
+          <a
+            href={uploadData}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-green-600 text-white py-1 px-3 rounded-lg hover:bg-green-700 transition"
+          >
+            Download
+          </a>
+        ) : (
+          <span className="text-red-500">No Upload</span>
         );
       },
     },
   ];
 
-  const saveToPdf = useRef();
+  const [sorting, setSorting] = useState([]);
+  const [filtering, setFiltering] = useState("");
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: { sorting, globalFilter: filtering },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setFiltering,
+  });
+
   const generateUserPdf = useReactToPrint({
     content: () => saveToPdf.current,
     documentTitle: "Report",
     onAfterPrint: () => alert("Report Printed"),
   });
-  const [sorting, setSorting] = useState([]);
-  const [filtering, setFiltering] = useState("");
-  const [showPagination, setShowPagination] = useState(true);
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting: sorting,
-      globalFilter: filtering,
-    },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setFiltering,
-  });
 
   return (
-    <>
-      <div className=" p-2 flex flex-col items-center justify-center">
+    <div className="p-6">
+      <div className="flex justify-between mb-4">
         <input
           type="text"
           value={filtering}
           onChange={(e) => setFiltering(e.target.value)}
           placeholder="Search"
-          className="text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 rounded-md pl-11 pr-4"
+          className="border rounded-lg px-4 py-2 w-64 shadow-md"
         />
+        <div className="flex space-x-4">
+          <button
+            onClick={generateUserPdf}
+            className="bg-red-600 text-white flex items-center px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition"
+          >
+            <FaRegFilePdf className="mr-2" /> PDF
+          </button>
+          <button
+            onClick={onDownload}
+            className="bg-green-600 text-white flex items-center px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition"
+          >
+            <SiMicrosoftexcel className="mr-2" /> Excel
+          </button>
+        </div>
       </div>
-      <div className="py-4 flex flex-row items-center justify-center space-x-8  ">
-        {/* <button
-          onClick={() => table.setPageIndex(0)}
-          className="bg-[#071952] text-white p-2 rounded-md active:scale-105 duration-150 "
-        >
-          First Page
-        </button>
-        <button
-          disabled={!table.getCanPreviousPage()}
-          onClick={() => table.previousPage()}
-          className="bg-[#071952] text-white p-2 rounded-md active:scale-105 duration-150 "
-        >
-          Prev Page
-        </button>
-        <button
-          disabled={!table.getCanNextPage()}
-          onClick={() => table.nextPage()}
-          className="bg-[#071952] text-white p-2 rounded-md active:scale-105 duration-150 "
-        >
-          Next page
-        </button>
-        <button
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          className="bg-[#071952] text-white p-2 rounded-md active:scale-105 duration-150 "
-        >
-          Last Page
-        </button> */}
-        <button
-          onClick={generateUserPdf}
-          className="bg-white text-red-700 font-bold flex gap-2 p-2 rounded-md active:scale-105 duration-150 "
-        >
-          <FaRegFilePdf className="text-red-700 text-2xl" />
-          <p>PDF</p>
-        </button>
-        <button
-          onClick={onDownload}
-          className="bg-white flex gap-2 font-bold text-green-700 p-2 rounded-md active:scale-105 duration-150 "
-        >
-          <SiMicrosoftexcel className="text-green-700 text-2xl" />
-          <p>Excel</p>
-        </button>
-      </div>
-      <div className="w3-container mt-2 " ref={saveToPdf}>
-        <h1 className="flex flex-col items-center justify-center text-2xl pb-5 font-bold">
-          Report-Skillfest:2023
-        </h1>
-        <table className="w3-table-all " ref={tableref}>
-          <thead>
+      <div
+        ref={saveToPdf}
+        className="overflow-x-auto bg-white p-4 rounded-lg shadow-lg"
+      >
+        <h2 className="text-xl font-bold mb-4 text-center">
+          Skillfest Report 2025
+        </h2>
+        <table className="w-full border-collapse border rounded-lg overflow-hidden shadow-md">
+          <thead className="bg-blue-600 text-white">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
+                    className="py-2 px-4 cursor-pointer"
                   >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    {
-                      { asc: "⬆️", desc: "⬇️" }[
-                        header.column.getIsSorted() ?? null
-                      ]
-                    }
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    {header.column.getIsSorted() === "asc"
+                      ? " ⬆️"
+                      : header.column.getIsSorted() === "desc"
+                      ? " ⬇️"
+                      : ""}
                   </th>
                 ))}
               </tr>
             ))}
           </thead>
-          <tbody ref={saveToPdf}>
+          <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="w3-hover-blue">
+              <tr key={row.id} className="border-b hover:bg-gray-100">
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
+                  <td key={cell.id} className="py-2 px-4">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -232,7 +158,7 @@ const Report = () => {
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 };
 

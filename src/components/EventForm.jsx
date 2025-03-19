@@ -7,229 +7,129 @@ import config from "../config";
 
 const EventForm = () => {
   const { SERVER_ADDRESS } = config;
-
   const { user } = useAuthContext();
   const { dispatch } = useEventContext();
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    imageurl: "",
+    date: "",
+    time: "",
+    amount: "",
+    first_prize: "",
+    second_prize: "",
+    third_prize: "",
+    supportnumone: "",
+    supportnumtwo: "",
+    venue: "",
+  });
+
   const [status, setStatus] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [imageurl, setImage] = useState("");
-  const [date, setDate] = useState("");
-  const [amount, setAmount] = useState("");
-  const [time, setTime] = useState("");
-  const [first_prize, setFirst] = useState("");
-  const [second_prize, setSecond] = useState("");
-  const [third_prize, setThird] = useState("");
-  const [supportnumone, setSupportone] = useState("");
-  const [supportnumtwo, setSupporttwo] = useState("");
-  const [venue, setVenue] = useState("");
   const [error, setError] = useState("");
-  //form submission function
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const neweve = {
-      title,
-      description,
-      imageurl,
-      time,
-      date,
-      amount,
-      first_prize,
-      second_prize,
-      third_prize,
-      supportnumone,
-      supportnumtwo,
-      venue,
-    };
-    const res = await axios.post(`${SERVER_ADDRESS}/api/events`, neweve, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
-    const data = res.data;
-    if (!res.status) {
-      setError(res.err.message);
-    }
-    if (res.status == 200) {
+    try {
+      const res = await axios.post(`${SERVER_ADDRESS}/api/events`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      dispatch({ type: "CREATE_EVENT", payload: res.data });
+      setFormData({
+        title: "",
+        description: "",
+        imageurl: "",
+        date: "",
+        time: "",
+        amount: "",
+        first_prize: "",
+        second_prize: "",
+        third_prize: "",
+        supportnumone: "",
+        supportnumtwo: "",
+        venue: "",
+      });
       setError(null);
-      setTitle("");
-      setAmount("");
-      setDate("");
-      setDescription("");
-      setImage("");
-      setTime("");
-      setFirst("");
-      setSecond("");
-      setThird("");
-      setStatus("");
-      setSupportone("");
-      setSupporttwo("");
-      setVenue("");
-      dispatch({ type: "CREATE_EVENT", payload: data });
-      console.log("new events added", res.data);
+    } catch (err) {
+      setError("Failed to create event");
     }
   };
-  // handle file upload
-  const cloudname = "ddajwuci9";
 
   const handleFile = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "mohamed");
-    axios
-      .post(
-        `https://api.cloudinary.com/v1_1/${cloudname}/image/upload`,
+
+    try {
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/ddajwuci9/image/upload`,
         formData
-      )
-      .then((res) => {
-        setStatus(tick);
-        setImage(res.data.secure_url);
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
+      );
+      setStatus(tick);
+      setFormData((prev) => ({ ...prev, imageurl: res.data.secure_url }));
+    } catch (err) {
+      console.log(err);
+    }
   };
+
   return (
-    <div>
-      <div>
-        <form className="space-y-3">
-          <div className="flex flex-col w-1/2 space-x-2 ">
-            <h1>Title:</h1>
-            <input
-              type="text"
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
-              value={title}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Description:</h1>
-            <textarea
-              onChange={(e) => {
-                setDescription(e.target.value);
-              }}
-              value={description}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Image:</h1>
-            <div className="flex space-x-1">
-              <input type="file" onChange={handleFile} className="py-1 px-2" />
-              <img src={status} alt="" className="h-8 bg-transparent" />
+    <div className="flex justify-center items-center min-h-screen bg-white px-4">
+      <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">
+          Create an Event
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {Object.keys(formData).map(
+            (key) =>
+              key !== "imageurl" && (
+                <div key={key}>
+                  <label className="block text-gray-600 capitalize">
+                    {key.replace("_", " ")}
+                  </label>
+                  <input
+                    type={
+                      key.includes("date")
+                        ? "date"
+                        : key.includes("time")
+                        ? "time"
+                        : "text"
+                    }
+                    name={key}
+                    value={formData[key]}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              )
+          )}
+          <div>
+            <label className="block text-gray-600">Upload Image</label>
+            <div className="flex items-center space-x-2">
+              <input
+                type="file"
+                onChange={handleFile}
+                className="p-2 border border-gray-300 rounded-lg"
+              />
+              {status && (
+                <img src={status} alt="Upload success" className="h-8" />
+              )}
             </div>
           </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Date:</h1>
-            <input
-              type="date"
-              onChange={(e) => {
-                setDate(e.target.value);
-              }}
-              value={date}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Time:</h1>
-            <input
-              type="time"
-              onChange={(e) => {
-                setTime(e.target.value);
-              }}
-              value={time}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Amount:</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setAmount(e.target.value);
-              }}
-              value={amount}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>First Prize</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setFirst(e.target.value);
-              }}
-              value={first_prize}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Second Prize</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setSecond(e.target.value);
-              }}
-              value={second_prize}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Third Prize</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setThird(e.target.value);
-              }}
-              value={third_prize}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Support Number1:</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setSupportone(e.target.value);
-              }}
-              value={supportnumone}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Support Number2:</h1>
-            <input
-              type="number"
-              onChange={(e) => {
-                setSupporttwo(e.target.value);
-              }}
-              value={supportnumtwo}
-              className="py-1 px-2"
-            />
-          </div>
-          <div className="flex flex-col  w-1/2 space-x-2">
-            <h1>Venue</h1>
-            <input
-              type="text"
-              onChange={(e) => {
-                setVenue(e.target.value);
-              }}
-              value={venue}
-              className="py-1 px-2"
-            />
-          </div>
-          <div>
-            <button
-              className="p-2 rounded-md bg-blue-950 text-white cursor-pointer"
-              onClick={handleSubmit}
-            >
-              Add Events
-            </button>
-            {error && <div>{error}</div>}
-          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            Add Event
+          </button>
+          {error && <p className="text-red-500 text-center">{error}</p>}
         </form>
       </div>
     </div>

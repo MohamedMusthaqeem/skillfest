@@ -1,119 +1,87 @@
 import { useState } from "react";
-import LoginImg from "../assets/Sign up.gif";
-import {useLogin} from '../hooks/useLogin'
+import { FaUser, FaUserShield, FaEnvelope, FaLock } from "react-icons/fa";
+import LoginImg from "../assets/loginimage.png";
+import { useLogin } from "../hooks/useLogin";
+
 const Mainpage = () => {
-  const [admin, setAdmin] = useState("underline ");
-  const [user, setUser] = useState("");
+  const [admin, setAdmin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [current,setCurrent]=useState({
-    current:"user_main",
-    to:"layout"
-  });
-  const {error,isLoading,login} =useLogin();
-  const handleSubmit= async(e)=>{
-     e.preventDefault();
-     await login(current,email,password)
+  const { error, isLoading, login } = useLogin();
 
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await login(
+      {
+        current: admin ? "admin" : "user_main",
+        to: admin ? "createuser" : "layout",
+      },
+      email,
+      password
+    );
+  };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center bg-Primary ">
-      <div className="text-center text-3xl  text-white font-semibold font-Poppins tracking-widest">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-r from-blue-900 to-blue-600 p-4">
+      <h1 className="text-white text-4xl font-bold mb-6 tracking-wide">
         SKILL FEST
-      </div>
-      <div className="flex flex-col md:flex-row items-center md:justify-evenly md:px-24 m-2 ">
-        <div className="h-full">
-          <img src={LoginImg} alt="" className="hidden lg:block" />
+      </h1>
+      <div className="flex flex-col md:flex-row items-center bg-white shadow-2xl rounded-lg overflow-hidden max-w-4xl w-full">
+        <div className="hidden md:flex flex-1 bg-gray-200">
+          <img src={LoginImg} alt="Login" className="object-cover w-full" />
         </div>
-        <div className="w-full max-w-md bg-blend-saturation rounded-lg top-0 border border-white p-5">
-          <div className="border-b border-white ">
-            <h1 className=" text-center tracking-widest text-2xl text-white font-semibold uppercase">
-              Login
-            </h1>
-          </div>
-          <div className="flex  w-full justify-evenly ">
-            <div
-              className={`w-1/2 flex py-4 cursor-pointer text-white  items-center justify-center font-semibold ${admin}`}
-              onClick={() => {
-                setAdmin("underline");
-                setUser("");
-                setCurrent({
-                  current:"user_main",
-                  to:"layout"
-                })
-              }}
+        <div className="flex-1 p-8">
+          <h2 className="text-center text-3xl font-bold text-gray-800">
+            Login
+          </h2>
+          <div className="flex justify-center mt-4 mb-6">
+            <button
+              className={`px-6 py-2 rounded-l-md font-semibold transition-colors ${
+                !admin ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+              }`}
+              onClick={() => setAdmin(false)}
             >
-              USER
-            </div>
-            <div
-              className={`w-1/2 flex py-4 cursor-pointer items-center  text-white justify-center font-semibold  ${user}`}
-              onClick={() => {
-                setUser("underline");
-                setAdmin("");
-                setCurrent({
-                  current:"admin",
-                  to:"createuser"
-                })
-              }}
+              <FaUser className="inline mr-2" /> User
+            </button>
+            <button
+              className={`px-6 py-2 rounded-r-md font-semibold transition-colors ${
+                admin ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+              }`}
+              onClick={() => setAdmin(true)}
             >
-              ADMIN
-            </div>
+              <FaUserShield className="inline mr-2" /> Admin
+            </button>
           </div>
-          <form onSubmit={handleSubmit}>
-            <div className="p-3"></div>
-            <div className="px-3 py-2">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-white"
-              >
-                Email
-              </label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative">
+              <FaEnvelope className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="email"
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-                className="mt-1 p-2 w-full border rounded-md outline-none text-black"
-                placeholder="sample@example.com"
+                className="w-full pl-10 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="Email Address"
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
-
-            <div className="mb-4 px-3">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-white"
-              >
-                Password
-              </label>
+            <div className="relative">
+              <FaLock className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="password"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                className="mt-1 p-2 w-full border rounded-md outline-none"
-                placeholder="********"
+                className="w-full pl-10 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-            <div className="py-2 p-3">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full border border-white text-white font-semibold py-2 rounded-md duration-150"
-              >
-                Login
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-blue-600 text-white font-semibold py-3 rounded-md hover:bg-blue-700 transition-all"
+            >
+              Login
+            </button>
           </form>
-          {error && (
-              <div
-                className="text-red-600"
-              >
-                {error}
-              </div>
-            )}
+          {error && <p className="text-red-600 text-center mt-4">{error}</p>}
         </div>
       </div>
     </div>
