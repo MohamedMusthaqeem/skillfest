@@ -14,7 +14,7 @@ const Mainpage = () => {
     await login(
       {
         current: admin ? "admin" : "user_main",
-        to: admin ? "createuser" : "layout",
+        to: admin ? "createuser" : "layout/dashboard",
       },
       email,
       password
